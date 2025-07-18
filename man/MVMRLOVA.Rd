@@ -25,6 +25,8 @@ MVMRLOVA(
 
 \item{betaXse}{A numeric matrix of standard errors for \code{betaX}.}
 
+\item{ny}{sample size of outcome GWAS}
+
 \item{gwas_p}{p-value threshold for the association between variants and the latent phenotype (the direct genetic effect). Default: 5e-2.}
 
 \item{gwas_p2}{p-value threshold for exposure GWAS used in instrument variable selection. Default: 5e-8}
@@ -42,6 +44,8 @@ A list with the following elements:
 \item{Valid}{Index of valid  instrumental variants.}
 \item{sig_v}{the 5th percentile of the permuted p-values .}
 \item{corrected_p-value}{corrected p-value based on the permutation distribution.}
+
+An object of class "mvmrlova" with summary output.
 }
 \description{
 Identifies vertical pleiotropy variants and estimates multivariable causal effects using GWAS summary statistics.

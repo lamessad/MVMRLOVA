@@ -7,6 +7,7 @@
 #' @param betaX A numeric matrix of standardized effect sizes (beta) from the exposures GWAS. Each column corresponds to a different exposure.
 #' @param betaYse A numeric vector of standard errors for `betaY`.
 #' @param betaXse A numeric matrix of standard errors for `betaX`.
+#' @param ny sample size of outcome GWAS
 #' @param gwas_p p-value threshold for the association between variants and the latent phenotype (the direct genetic effect). Default: 5e-2.
 #' @param gwas_p2 p-value threshold for exposure GWAS used in instrument variable selection. Default: 5e-8
 #' @param permutn number of permutations, Default: 0.
@@ -26,6 +27,7 @@
 #' \item{Valid}{Index of valid  instrumental variants.}
 #' \item{sig_v}{the 5th percentile of the permuted p-values .}
 #' \item{corrected_p-value}{corrected p-value based on the permutation distribution.}
+#'@return An object of class "mvmrlova" with summary output.
 #'
 #' @keywords Mendelian randomization.
 #' @import MendelianRandomization
@@ -36,7 +38,6 @@
 #'
 MVMRLOVA = function(betaY, betaX, betaYse, betaXse, ny, gwas_p , gwas_p2, permutn = 0, log_file = NULL) {
 
-  library(MendelianRandomization)
 
   log_message <- function(message, log_file) {
     if (!is.null(log_file)) {
@@ -56,7 +57,7 @@ MVMRLOVA = function(betaY, betaX, betaYse, betaXse, ny, gwas_p , gwas_p2, permut
 
     yi=0;tau_t=array(-9999,nexp);tau_t2=array(0,nexp)
 
-    #while (tau_t[1] != tau_t2[1] & yi <= 10) {
+
     while (!all(tau_t == tau_t2) && yi <= 10) {
 
       yi = yi + 1
@@ -83,31 +84,31 @@ MVMRLOVA = function(betaY, betaX, betaYse, betaXse, ny, gwas_p , gwas_p2, permut
       svv2 = which(apply(pX, 1, function(row) any(row < gwas_p2)))
       svv = intersect(svv1, svv2)
 
-      mv_ivw <- mr_mvinput(bx = betaX[svv,], bxse = betaXse[svv,],
+      mv_ivw <- MendelianRandomization::mr_mvinput(bx = betaX[svv,], bxse = betaXse[svv,],
                            by = betaY[svv], byse = betaYse[svv])
-      ivw <- mr_mvivw(mv_ivw)
+      ivw <- MendelianRandomization::mr_mvivw(mv_ivw)
       tau_t2 = ivw$Estimate
 
-      # cat("iteration", yi, "\n")
-      # for (i in 1:nexp) {
-      #   cat(ivw$Estimate[i], "SE", ivw$StdError[i], "P", ivw$Pvalue[i], "\n")
-      # }
+
     }
 
-    mv_ivw <- mr_mvinput(bx = betaX[svv,], bxse = betaXse[svv,],
+    mv_ivw <- MendelianRandomization::mr_mvinput(bx = betaX[svv,], bxse = betaXse[svv,],
                          by = betaY[svv], byse = betaYse[svv])
-    ivw <- mr_mvivw(mv_ivw)
+    ivw <- MendelianRandomization::mr_mvivw(mv_ivw)
 
     return(list(
       CausEst = ivw$Estimate,
       CausEstSE = ivw$StdError,
       CausEstP = ivw$Pvalue,
       IVs = gwas5[,4],
-      Valid = svv
+      Valid = svv,
+      pcor=pcor
     ))
   }
 
   mvmr_lova_result <- MVMR_LOVA(betaY, betaX, betaYse, betaXse,  ny, gwas_p, gwas_p2, log_file)
+
+  exposure_names <- colnames(betaX)
 
   if (permutn > 0) {
     permutp = matrix(NA, permutn, ncol(betaX))
@@ -135,11 +136,24 @@ MVMRLOVA = function(betaY, betaX, betaYse, betaXse, ny, gwas_p , gwas_p2, permut
       IVs = mvmr_lova_result$IVs,
       Valid = mvmr_lova_result$Valid,
       sig_v = permutt,
-      corrected_p = corrected_p
+      corrected_p = corrected_p,
+      permutn = permutn,
+      exposure_names = exposure_names
     )
   } else {
-    result <- mvmr_lova_result
+    result <- list(
+      CausEst = mvmr_lova_result$CausEst,
+      CausEstSE = mvmr_lova_result$CausEstSE,
+      CausEstP = mvmr_lova_result$CausEstP,
+      IVs = mvmr_lova_result$IVs,
+      Valid = mvmr_lova_result$Valid,
+      sig_v = NULL,
+      corrected_p = NULL,
+      permutn = 0,
+      exposure_names = exposure_names
+    )
   }
 
+  class(result) <- "mvmrlova"
   return(result)
 }

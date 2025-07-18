@@ -2,7 +2,7 @@ Package: MVMRLOVA
 Type: Package
 Title: Multivariable Mendelian randomization based on latent outcome variable approach
 Version: 0.1.0
-Author@R: c(person("Hong", "Lee", role = c("aut","cph"),email = "Hong.Lee@unisa.edu.au"),
+Authors@R: c(person("Hong", "Lee", role = c("aut","cph"),email = "Hong.Lee@unisa.edu.au"),
              person("Lamessa", "Amente", role = c("aut", "cre","cph"), email = "dubelamessa@gmail.com"))
 Description: This package performs multivariable Mendelian randomizationhis analysis based on latent phenotype of the outcome that explicitly exclude vertical pleiotropy effects.
 License: GPL (>=3)
@@ -14,3 +14,5 @@ LazyData: true
 Depends: R (>= 3.5.0)
 URL: https://github.com/lamessad/MVMRLOVA
 BugReports: https://github.com/lamessad/MVMRLOVA/issues
+Imports: 
+    MendelianRandomization
