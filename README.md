@@ -9,7 +9,7 @@
 The goal of MVMRLOVA is to performs multivariable Mendelian
 randomization analysis based on latent phenotype of the outcome that
 explicitly exclude vertical pleiotropy effects via EM algorithm. There
-are three functions:
+is a single function:
 
 - **`MVMRLOVA()`** main function that performs MVMR analysis and
   provides causal effect estimates.
@@ -61,14 +61,14 @@ exposuregwas_id = c(
 outcomegwas_id = 'ebi-a-GCST005195'
 exposure_dat = mv_extract_exposures(exposuregwas_id)
 #> Please look at vignettes for options on running this locally if you need to run many instances of this command.
-#> Clumping 1, 126 variants, using EUR population reference
-#> Removing 25 of 126 variants due to LD with other variants or absence from LD reference panel
-#> Extracting data for 101 SNP(s) from 2 GWAS(s)
+#> Clumping 1, 130 variants, using EUR population reference
+#> Removing 27 of 130 variants due to LD with other variants or absence from LD reference panel
+#> Extracting data for 103 SNP(s) from 2 GWAS(s)
 #> Harmonising Triglycerides || id:ebi-a-GCST002216 (ebi-a-GCST002216) and LDL cholesterol || id:ebi-a-GCST002222 (ebi-a-GCST002222)
 #> Removing the following SNPs for being palindromic with intermediate allele frequencies:
 #> rs3758348, rs7534572
 outcome_dat <- extract_outcome_data(exposure_dat$SNP,outcomegwas_id)
-#> Extracting data for 101 SNP(s) from 1 GWAS(s)
+#> Extracting data for 103 SNP(s) from 1 GWAS(s)
 mvdat <- mv_harmonise_data(exposure_dat, outcome_dat)
 #> Harmonising Triglycerides || id:ebi-a-GCST002216 (ebi-a-GCST002216) and Coronary artery disease || id:ebi-a-GCST005195 (ebi-a-GCST005195)
 #> Removing the following SNPs for being palindromic with intermediate allele frequencies:
@@ -82,16 +82,10 @@ ny=min(outcome_dat$samplesize.outcome)
 #MVMRLOVA analysis
 library(MVMRLOVA)
 est <- MVMRLOVA(betaY, betaX, betaYse, betaXse, ny, gwas_p = 0.05, gwas_p2 = 5e-8, 100)
-#> Warning: package 'MendelianRandomization' was built under R version 4.3.3
-#> 
-#> Attaching package: 'MendelianRandomization'
-#> The following objects are masked from 'package:TwoSampleMR':
-#> 
-#>     mr_ivw, mr_median
 #> Warning in MVMRLOVA(betaY, betaX, betaYse, betaXse, ny, gwas_p = 0.05, gwas_p2
 #> = 5e-08, : To get a more precise p-value, it is recommended to increase the
 #> number of permutations.
 est$CausEst
 #>      BxTG     BxLDL 
-#> 0.2143080 0.2848379
+#> 0.1966169 0.2827391
 ```

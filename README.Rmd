@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 The goal of MVMRLOVA is to performs multivariable Mendelian randomization analysis based on latent phenotype of the outcome that explicitly exclude vertical pleiotropy effects via EM algorithm.
-There are three functions:
+There is a single function:
 
 -  **`MVMRLOVA()`**  main function that performs MVMR analysis and provides causal effect estimates.
 
