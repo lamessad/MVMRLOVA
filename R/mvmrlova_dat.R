@@ -11,5 +11,5 @@
 #'   \item{ny}{A single numeric value giving the sample size of the outcome GWAS}
 #' }
 #' @source The data was simulated/generated for illustrative purposes.
-"mvmrlova_dat"
+"mvmr_dat"
 
